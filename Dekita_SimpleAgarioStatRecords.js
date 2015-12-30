@@ -220,8 +220,8 @@
     };
     AnAverageClass.GetAverageTime = function(timeArray) {
         var h = 0, m = 0, s = 0;
-        var z = timeArray.length;
-        for (var i = z - 1; i >= 0 && timeArray[i]; i--) {
+        var z = timeArray.length-1;
+        for (var i = z; i >= 0 && timeArray[i]; i--) {
             var d = this.TimeToObjekt(timeArray[i]);
             if (d.h || d.m || d.s){
                 h += d.h; m += d.m; s += d.s;
