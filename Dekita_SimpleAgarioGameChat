@@ -1,0 +1,50 @@
+// ==UserScript==
+// @name        Agar.io ~ Game Chat By Dekita
+// @namespace   http://www.dekyde.com
+// @description Agar.io in game chatbox
+// @version     0.9
+// @author      Dekita
+// @match       *://agar.io/*
+// @grant       none
+// ==/UserScript==
+(function (AgarioGameChatByDekita) {
+    /**
+     * Enable strict mode to enforce stronger syntax rules
+     */
+    "use strict";
+    /*\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+     *                                                                        |
+     * ■ SETTINGS                                                             |
+     *                                                                        |
+     */////////////////////////////////////////////////////////////////////////
+    var SETTINGS = {
+        opac: '0.6',
+        posi: { 
+            x: '10px', 
+            y: (window.innerHeight - 350) + 'px', 
+        },
+        size: { 
+            w: '260px', 
+            h: '320px', 
+        },
+    };
+    /*\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+     *                                                                        |
+     * ■ End of SETTINGS                                                      |
+     *                                                                        |
+     */////////////////////////////////////////////////////////////////////////
+    var iframe = document.createElement('iframe');
+    iframe.src = 'http://dac.dekyde.com';
+    iframe.style.zIndex = '500';
+    iframe.style.position = 'fixed';
+    iframe.style.opacity = SETTINGS.opac;
+    //iframe.style.background = SETTINGS.colr.back;
+    //iframe.style.color = SETTINGS.colr.text;
+    iframe.style.left = SETTINGS.posi.x;
+    iframe.style.top  = SETTINGS.posi.y;
+    iframe.width  = SETTINGS.size.w;
+    iframe.height = SETTINGS.size.h;
+    iframe.style.border = 'none';
+    $('body').append(iframe);
+
+})();

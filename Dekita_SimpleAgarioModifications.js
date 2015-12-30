@@ -283,12 +283,7 @@
     setDarkTheme(SETTINGS.useDarkTheme);
     setSkipStats(SETTINGS.setSkipStats);
     setAcid(SETTINGS.playAcidMode);
-
-    //console.log("Mass Text: " + $(".stats-highest-mass").text());
-    //$('body').append('<div style="position:absolute;opacity:0.7;z-index:100;background:#000;"><h4 id="dekibit">Showing Text </h4></div>');
-    //$("#dekibit").val("My Awesome Text"); 
-
-
+    
     /*\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
      *                                                                        |
      * ■ End of script                                                        |
