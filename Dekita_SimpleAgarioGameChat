@@ -18,14 +18,13 @@
      *                                                                        |
      */////////////////////////////////////////////////////////////////////////
     var SETTINGS = {
-        opac: '0.6',
         posi: { 
-            x: '10px', 
-            y: (window.innerHeight - 350) + 'px', 
+            x: 10, 
+            y: (window.innerHeight - 356), 
         },
         size: { 
-            w: '260px', 
-            h: '320px', 
+            w: 240, 
+            h: 320, 
         },
     };
     /*\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
@@ -33,18 +32,58 @@
      * ■ End of SETTINGS                                                      |
      *                                                                        |
      */////////////////////////////////////////////////////////////////////////
+    var div = document.createElement("div");
+    div.className = 'thumbnail';
+    div.style.zIndex = '200';
+    div.style.position = 'fixed';
+    div.style.opacity = SETTINGS.opac;
+    div.style.background = 'black';
+    div.style.color = 'white';
+    div.style.left = SETTINGS.posi.x + 'px';
+    div.style.top = SETTINGS.posi.y + 'px';
+    div.style.width = SETTINGS.size.w + 'px';
+    div.style.height = SETTINGS.size.h + 'px';
+    div.innerHTML = '<div class="text-center">\
+    <button id="toggleChat" class="btn btn-xs btn-info">Hide Chat</button></div>';
+
     var iframe = document.createElement('iframe');
-    iframe.src = 'http://dac.dekyde.com';
+    iframe.src = 'https://dry-ocean-2849.herokuapp.com/';//http://dac.dekyde.com';
     iframe.style.zIndex = '500';
     iframe.style.position = 'fixed';
     iframe.style.opacity = SETTINGS.opac;
-    //iframe.style.background = SETTINGS.colr.back;
-    //iframe.style.color = SETTINGS.colr.text;
-    iframe.style.left = SETTINGS.posi.x;
-    iframe.style.top  = SETTINGS.posi.y;
-    iframe.width  = SETTINGS.size.w;
-    iframe.height = SETTINGS.size.h;
+    iframe.style.left = (SETTINGS.posi.x+2) + 'px';
+    iframe.style.top  = (SETTINGS.posi.y+28) + 'px';
+    iframe.width  = (SETTINGS.size.w-4) + 'px';
+    iframe.height = (SETTINGS.size.h-32) + 'px';
     iframe.style.border = 'none';
-    $('body').append(iframe);
 
+    div.appendChild(iframe);
+    $('body').append(div);
+
+    var clickState = true;
+    var toggleButton = document.getElementById("toggleChat");
+    toggleButton.onclick = function(){
+        console.log("Toggling window")
+        clickState = !clickState;
+        if (clickState){
+            div.style.opacity = '0.8';
+            div.style.left = SETTINGS.posi.x + 'px';
+            div.style.top = SETTINGS.posi.y + 'px';
+            iframe.style.left = (SETTINGS.posi.x+2) + 'px';
+            iframe.style.top  = (SETTINGS.posi.y+28) + 'px';
+            toggleButton.innerHTML = "Hide Chat";
+        } else {
+            div.style.opacity = '0.4';
+            div.style.left =(SETTINGS.posi.x+SETTINGS.size.w) + 'px';
+            div.style.top = (SETTINGS.posi.y+SETTINGS.size.h) + 'px';
+            iframe.style.left = (SETTINGS.posi.x+SETTINGS.size.w+2) + 'px';
+            iframe.style.top  = (SETTINGS.posi.y+SETTINGS.size.h+28) + 'px';
+            toggleButton.innerHTML = "Show Chat";
+        };
+    };    
+    /*\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+     *                                                                        |
+     * ■ End of script                                                        |
+     *                                                                        |
+     */////////////////////////////////////////////////////////////////////////
 })();

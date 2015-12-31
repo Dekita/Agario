@@ -22,18 +22,20 @@
      */////////////////////////////////////////////////////////////////////////
     var SETTINGS = {
         /**
-         * 
-         * 
+         * opac: {object} Determines the opacity of the window
+         * @param show {string} contains a floating point value 
+         * @param hide {string} contains a floating point value 
+         * floating points are for the percentage of visibility.
          */ 
-        opac: '0.6',
+        opac: {show: '0.8', hide: '0.4'},
 
         /**
          * 
          * 
          */ 
         posi: { 
-            x: '10px', 
-            y: '10px', 
+            x: {show: '10px', hide: '10px'}, 
+            y: {show: '10px', hide: '-246px'}, 
         },
 
         /**
@@ -41,7 +43,7 @@
          * 
          */ 
         size: { 
-            w: 'auto', 
+            w: '240px', 
             h: 'auto', 
         },
 
@@ -59,12 +61,12 @@
          * 
          */ 
         text: {
-            mass: '-Mass: ',
-            food: '-Food: ',
-            time: '-Time: ',
-            cell: '-Kills: ',
-            lead: '-Leaderboard: ',
-            ltim: '-Leader Time: ',
+            mass: 'Mass: ',
+            food: 'Food: ',
+            time: 'Time: ',
+            cell: 'Cells: ',
+            lead: 'L-Brd: ',
+            ltim: 'LTime: ',
         }, 
         /**
          * End of SETTINGS
@@ -79,70 +81,93 @@
 
     var div = document.createElement("div");
     div.className = 'thumbnail';
-    div.style.zIndex = '100';
+    div.style.zIndex = '200';
     div.style.position = 'fixed';
-    div.style.opacity = SETTINGS.opac;
+    div.style.opacity = SETTINGS.opac.show;
     div.style.background = SETTINGS.colr.back;
     div.style.color = SETTINGS.colr.text;
-    div.style.left = SETTINGS.posi.x;
-    div.style.top = SETTINGS.posi.y;
+    div.style.left = SETTINGS.posi.x.show;
+    div.style.top = SETTINGS.posi.y.show;
     div.style.width = SETTINGS.size.w;
     div.style.height = SETTINGS.size.h;
-//    div.style.padding = '0 !important';
-//    div.style.margin = '0 !important';
     div.innerHTML = '\
         <div class="table-responsive">\
-            <table class="table table-condensed">\
+            <table class="table table-condensed" style="margin-bottom: 0px;">\
             <thead>\
                 <tr>\
-                    <th>Type: </th>\
-                    <th>Avrg: </th>\
-                    <th>Best: </th>\
-                    <th>Last: </th>\
+                    <th style="color: aqua;">Type: </th>\
+                    <th style="color: aqua;">Average: </th>\
+                    <th style="color: aqua;">Best: </th>\
+                    <th style="color: aqua;">Last: </th>\
                 </tr>\
             </thead>\
             <tbody>\
                 <tr>\
-                    <td>Mass</td>\
+                    <td style="color: aqua;">'+SETTINGS.text.mass+'</td>\
                     <td id="dekimassavrg"></td>\
                     <td id="dekimassbest"></td>\
                     <td id="dekimasslast"></td>\
                 </tr>\
                 <tr>\
-                    <td>Food</td>\
+                    <td style="color: aqua;">'+SETTINGS.text.food+'</td>\
                     <td id="dekifoodavrg"></td>\
                     <td id="dekifoodbest"></td>\
                     <td id="dekifoodlast"></td>\
                 </tr>\
                 <tr>\
-                    <td>Time</td>\
+                    <td style="color: aqua;">'+SETTINGS.text.time+'</td>\
                     <td id="dekitimeavrg"></td>\
                     <td id="dekitimebest"></td>\
                     <td id="dekitimelast"></td>\
                 </tr>\
                 <tr>\
-                    <td>Cell</td>\
+                    <td style="color: aqua;">'+SETTINGS.text.cell+'</td>\
                     <td id="dekicellavrg"></td>\
                     <td id="dekicellbest"></td>\
                     <td id="dekicelllast"></td>\
                 </tr>\
                 <tr>\
-                    <td>Lead</td>\
+                    <td style="color: aqua;">'+SETTINGS.text.lead+'</td>\
                     <td id="dekileadavrg"></td>\
                     <td id="dekileadbest"></td>\
                     <td id="dekileadlast"></td>\
                 </tr>\
                 <tr>\
-                    <td>Ltim</td>\
+                    <td style="color: aqua;">'+SETTINGS.text.ltim+'</td>\
                     <td id="dekiltimavrg"></td>\
                     <td id="dekiltimbest"></td>\
                     <td id="dekiltimlast"></td>\
                 </tr>\
             </tbody>\
             </table>\
+            <hr style="margin: 0px;" />\
+            <div class="text-center">\
+                <p id="gamesPlayed">0</p>\
+                <button id="toggleButton" name="toggleButton" class="btn btn-xs btn-info">Hide Stats</button>\
+            </div>\
         </div>\
     ';
     $('body').append(div);
+
+
+    var clickState = true;
+    //var toggleButton = $('toggleButton');
+    var toggleButton = document.getElementById("toggleButton");
+    toggleButton.onclick = function(){
+        console.log("Toggling window")
+        clickState = !clickState;
+        if (clickState){
+            div.style.opacity = SETTINGS.opac.show;
+            div.style.left = SETTINGS.posi.x.show;
+            div.style.top = SETTINGS.posi.y.show;
+            toggleButton.innerHTML = "Hide Stats";
+        } else {
+            div.style.opacity = SETTINGS.opac.hide;
+            div.style.left = SETTINGS.posi.x.hide;
+            div.style.top = SETTINGS.posi.y.hide;
+            toggleButton.innerHTML = "Show Stats";
+        };
+    };
 
     /*\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
      *                                                                        |
@@ -158,10 +183,10 @@
     AnAverageClass.FoodBest = 0;
     AnAverageClass.CellBest = 0;
     AnAverageClass.LeadBest = 0;
-    AnAverageClass.TimeLast ='';
-    AnAverageClass.LtimLast ='';
-    AnAverageClass.TimeBest ='';
-    AnAverageClass.LtimBest ='';
+    AnAverageClass.TimeLast ='0';
+    AnAverageClass.LtimLast ='0';
+    AnAverageClass.TimeBest ='0';
+    AnAverageClass.LtimBest ='0';
     AnAverageClass.MassAvge = [];
     AnAverageClass.FoodAvge = [];
     AnAverageClass.TimeAvge = [];
@@ -172,9 +197,9 @@
         this.MassLast = Number($(".stats-highest-mass").text());
         this.FoodLast = Number($(".stats-food-eaten").text());
         this.CellLast = Number($(".stats-cells-eaten").text());
-        this.LtimLast = $(".stats-leaderboard-time").text();
+        this.LtimLast = $(".stats-leaderboard-time").text() || '0:0:0';
         this.LeadLast = $(".stats-top-position").text();
-        this.TimeLast = $(".stats-time-alive").text();
+        this.TimeLast = $(".stats-time-alive").text() || '0:0:0';
         this.MassBest = this.GetBestData(this.MassLast, this.MassBest);
         this.FoodBest = this.GetBestData(this.FoodLast, this.FoodBest);
         this.TimeBest = this.GetBestData(this.TimeLast, this.TimeBest);
@@ -187,6 +212,8 @@
         this.CellAvge.push(this.CellLast);
         this.LeadAvge.push(this.LeadLast);
         this.LtimAvge.push(this.LtimLast);
+        var plays = AnAverageClass.MassAvge.length-1;
+        $("#gamesPlayed").text("Games Played: " + plays);
     };
     AnAverageClass.GetBestData = function(lastValue, bestValue) {
         return (lastValue > bestValue) ? lastValue : bestValue;
@@ -243,6 +270,7 @@
         return data.h+':'+data.m+':'+data.s;
     };
     AnAverageClass.PadTimeNums = function(timeNumber) {
+        if (isNaN(timeNumber)){ timeNumber = 0;};
         timeNumber = String(timeNumber);
         while (timeNumber.length < 2){
             timeNumber = '0' + timeNumber;
@@ -256,6 +284,7 @@
      */////////////////////////////////////////////////////////////////////////
 
     AnAverageClass.SetNewHighMass = function() {
+        //document.getElementById("dekimasslast").style.color = 'red';
         $("#dekimasslast").text(this.MassLast);
         $("#dekimassbest").text(this.MassBest);
         $("#dekimassavrg").text(this.GetAverageData(this.MassAvge));
@@ -309,7 +338,7 @@
      *                                                                        |
      */////////////////////////////////////////////////////////////////////////
 
-    function DeLoop(argument) {
+    (function DeLoop(){
         if (AnAverageClass.NeedReset.apply(AnAverageClass)){
             AnAverageClass.UpdateData.apply(AnAverageClass);
             AnAverageClass.SetNewHighMass.apply(AnAverageClass);
@@ -321,8 +350,7 @@
             AnAverageClass.ResetNeedReset.apply(AnAverageClass);
         };
         setTimeout(DeLoop, 1000);
-    }
-    DeLoop();
+    })();
 
     /*\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
      *                                                                        |
