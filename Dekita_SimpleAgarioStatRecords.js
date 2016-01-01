@@ -67,6 +67,7 @@
             cell: 'Cells: ',
             lead: 'L-Brd: ',
             ltim: 'LTime: ',
+            game: 'Games Played: ',
         }, 
         /**
          * End of SETTINGS
@@ -202,40 +203,53 @@
         this.TimeLast = $(".stats-time-alive").text() || '0:0:0';
         this.MassBest = this.GetBestData(this.MassLast, this.MassBest);
         this.FoodBest = this.GetBestData(this.FoodLast, this.FoodBest);
-        this.TimeBest = this.GetBestData(this.TimeLast, this.TimeBest);
+        this.TimeBest = this.GetBestTime(this.TimeLast, this.TimeBest);
         this.CellBest = this.GetBestData(this.CellLast, this.CellBest);
         this.LeadBest = this.GetBestData(this.LeadLast, this.LeadBest);
-        this.LtimBest = this.GetBestData(this.LtimLast, this.LtimBest);
+        this.LtimBest = this.GetBestTime(this.LtimLast, this.LtimBest);
         this.MassAvge.push(this.MassLast);
         this.FoodAvge.push(this.FoodLast);
         this.TimeAvge.push(this.TimeLast);
         this.CellAvge.push(this.CellLast);
         this.LeadAvge.push(this.LeadLast);
         this.LtimAvge.push(this.LtimLast);
-        var plays = AnAverageClass.MassAvge.length-1;
-        $("#gamesPlayed").text("Games Played: " + plays);
+        this.SetNewHighMass();
+        this.SetNewHighFood();
+        this.SetNewHighTime();
+        this.SetNewHighCell();
+        this.SetNewHighLead();
+        this.SetNewHighLtim();
+        this.SetNewGameCntr();
+        this.ResetNeedReset();
     };
     AnAverageClass.GetBestData = function(lastValue, bestValue) {
+        lastValue = Number(lastValue); bestValue = Number(bestValue); 
         return (lastValue > bestValue) ? lastValue : bestValue;
     };
-    AnAverageClass.GetAverageData = function(dataContainer) {
-        var size = dataContainer.length-1;
-        if (size > 0) {
-            var value = AnAverageClass.GetTotalDataValue(dataContainer) / size;
-            return value.toFixed(1);
-        };  return '0';
+    AnAverageClass.GetBestTime = function(lastValue, bestValue) {
+        return (lastValue > bestValue) ? lastValue : bestValue;
     };
-    AnAverageClass.GetTotalDataValue = function(dataContainer) {
+    AnAverageClass.GetTotalDataValue = function(dC) {
         var totalValue = 0;
-        // Note: not 'i >= 0' as we want to skip the first one.
-        for (var i = dataContainer.length - 1; i > 0; i--) {
-            if (dataContainer[i] !== ':('){
-                totalValue += dataContainer[i];
-            } else {
-                totalValue += 0;
+        for (var i = dC.length - 1; i > 0; i--) {
+            if (dC[i] !== ':(' && dC !== ''){
+                totalValue += Number(dC[i]);
             };
         };
         return totalValue;
+    };
+    AnAverageClass.GetAverageData = function(dataContainer) {
+        var size = dataContainer.length-1;
+        if (size) {
+            var value = this.GetTotalDataValue(dataContainer) / size;
+            return String(value.toFixed(2));
+        };  return '0';
+    };
+    AnAverageClass.GetAverageLead = function(dataContainer) {
+        var average = Number(this.GetAverageData(dataContainer));
+        if (average){
+            return String(10 - average);
+        };  return '0';
     };
     AnAverageClass.TimeToObjekt = function(str_array) {
         var d = str_array.split(':');
@@ -248,7 +262,7 @@
     AnAverageClass.GetAverageTime = function(timeArray) {
         var h = 0, m = 0, s = 0;
         var z = timeArray.length-1;
-        for (var i = z; i >= 0 && timeArray[i]; i--) {
+        for (var i = z; i > 0 && timeArray[i]; i--) {
             var d = this.TimeToObjekt(timeArray[i]);
             if (d.h || d.m || d.s){
                 h += d.h; m += d.m; s += d.s;
@@ -277,50 +291,78 @@
         };
         return timeNumber;
     };
-    /*\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-     *                                                                        |
-     * ■ Functions to set the new data when its reset                         |
-     *                                                                        |
-     */////////////////////////////////////////////////////////////////////////
-
+    AnAverageClass.GetAverageTrendColor = function(dataContainer, isTime) {
+        var trnd = [], size = dataContainer.length-1;
+        var trnS = Math.floor(size/2);
+        for (var i = size; i > trnS; i--) {
+            trnd.push(dataContainer[i] > dataContainer[i-1]);
+        };
+        var trnR = this.CountTrendResult(trnd);
+        var trnH = Math.floor(trnS/2);
+        if (size >= 4){
+            if (trnR > trnH) {
+                return 'green';
+            } else if (trnR == trnH) {
+                return 'white';
+            } else {
+                return 'red';
+            };
+        } else {
+            return 'orange';
+        };
+    };
+    AnAverageClass.CountTrendResult = function(dataContainer) {
+        var result = 0;
+        for (var i = dataContainer.length - 1; i >= 0; i--) {
+            if (dataContainer[i] === true){
+                result++;
+            };
+        };
+        return result;
+    };
+    AnAverageClass.SetAverageTrendColor = function(eL, dC) {
+        var col = this.GetAverageTrendColor(dC);
+        document.getElementById(eL).style.color = col;
+    };
     AnAverageClass.SetNewHighMass = function() {
-        //document.getElementById("dekimasslast").style.color = 'red';
         $("#dekimasslast").text(this.MassLast);
         $("#dekimassbest").text(this.MassBest);
         $("#dekimassavrg").text(this.GetAverageData(this.MassAvge));
+        this.SetAverageTrendColor("dekimassavrg", this.MassAvge);
     };
     AnAverageClass.SetNewHighFood = function() {
         $("#dekifoodlast").text(this.FoodLast);
         $("#dekifoodbest").text(this.FoodBest);
         $("#dekifoodavrg").text(this.GetAverageData(this.FoodAvge));
+        this.SetAverageTrendColor("dekifoodavrg", this.FoodAvge);
     };
     AnAverageClass.SetNewHighTime = function() {
         $("#dekitimelast").text(this.TimeLast);
         $("#dekitimebest").text(this.TimeBest);
         $("#dekitimeavrg").text(this.GetAverageTimeData(this.TimeAvge));
+        this.SetAverageTrendColor("dekitimeavrg", this.TimeAvge);
     };
     AnAverageClass.SetNewHighCell = function() {
         $("#dekicelllast").text(this.CellLast);
         $("#dekicellbest").text(this.CellBest);
         $("#dekicellavrg").text(this.GetAverageData(this.CellAvge));
+        this.SetAverageTrendColor("dekicellavrg", this.CellAvge);
     };
     AnAverageClass.SetNewHighLead = function() {
         $("#dekileadlast").text(this.LeadLast);
         $("#dekileadbest").text(this.LeadBest);
-        $("#dekileadavrg").text(this.GetAverageData(this.LeadAvge));
+        $("#dekileadavrg").text(this.GetAverageLead(this.LeadAvge));
+        this.SetAverageTrendColor("dekileadavrg", this.LeadAvge);
     };
     AnAverageClass.SetNewHighLtim = function() {
         $("#dekiltimlast").text(this.LtimLast);
         $("#dekiltimbest").text(this.LtimBest);
         $("#dekiltimavrg").text(this.GetAverageTimeData(this.LtimAvge));
+        this.SetAverageTrendColor("dekiltimavrg", this.LtimAvge);
     };
-
-    /*\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-     *                                                                        |
-     * ■ Methods to determine when data needs altered                         |
-     *                                                                        |
-     */////////////////////////////////////////////////////////////////////////
-
+    AnAverageClass.SetNewGameCntr = function() {
+        $("#gamesPlayed").text(SETTINGS.text.game+(this.MassAvge.length-1));
+    };
     AnAverageClass.lastNeedReset =-1;
     AnAverageClass.NeedReset = function() {
         return Boolean(this.lastNeedReset != this.GetResetData());
@@ -341,15 +383,7 @@
     (function DeLoop(){
         if (AnAverageClass.NeedReset.apply(AnAverageClass)){
             AnAverageClass.UpdateData.apply(AnAverageClass);
-            AnAverageClass.SetNewHighMass.apply(AnAverageClass);
-            AnAverageClass.SetNewHighFood.apply(AnAverageClass);
-            AnAverageClass.SetNewHighTime.apply(AnAverageClass);
-            AnAverageClass.SetNewHighCell.apply(AnAverageClass);
-            AnAverageClass.SetNewHighLead.apply(AnAverageClass);
-            AnAverageClass.SetNewHighLtim.apply(AnAverageClass);
-            AnAverageClass.ResetNeedReset.apply(AnAverageClass);
-        };
-        setTimeout(DeLoop, 1000);
+        };  setTimeout(DeLoop, 1000);
     })();
 
     /*\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\

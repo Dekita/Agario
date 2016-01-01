@@ -35,8 +35,8 @@
     var div = document.createElement("div");
     div.className = 'thumbnail';
     div.style.zIndex = '200';
+    div.style.opacity = '0.8';
     div.style.position = 'fixed';
-    div.style.opacity = SETTINGS.opac;
     div.style.background = 'black';
     div.style.color = 'white';
     div.style.left = SETTINGS.posi.x + 'px';
@@ -50,7 +50,6 @@
     iframe.src = 'https://dry-ocean-2849.herokuapp.com/';//http://dac.dekyde.com';
     iframe.style.zIndex = '500';
     iframe.style.position = 'fixed';
-    iframe.style.opacity = SETTINGS.opac;
     iframe.style.left = (SETTINGS.posi.x+2) + 'px';
     iframe.style.top  = (SETTINGS.posi.y+28) + 'px';
     iframe.width  = (SETTINGS.size.w-4) + 'px';
